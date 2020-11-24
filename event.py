@@ -4,7 +4,6 @@
 
 __author__ = "Han Xiao (Aaron)"
 
-
 class Event:
     """
 
