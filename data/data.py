@@ -70,7 +70,7 @@ class HistoricalDataHandler(DataHandler):
     :param method:
     """
 
-    def __init__(self, events, symbol_list:list, csv_path:str = None, method='online',
+    def __init__(self, events:MarketEvent, symbol_list:list, csv_path:str = None, method='online',
                  start=None, end=None):
         """
 
@@ -107,35 +107,20 @@ class HistoricalDataHandler(DataHandler):
 
         :return:
         """
-        comb_index = None
         for symbol in self.symbol_list:
             path = self.csv_path + '/{}.csv'.format(symbol)
             self.symbol_data[symbol] = pd.read_csv(
                 path, header=0, index_col=0, parse_dates=True,
                 names = [
-                    'datetime', 'open', 'high', 'low', 'close', 'volume', 'adj_close'
+                    'datetime', 'high', 'low', 'open', 'close', 'volume', 'adj_close'
                 ]
-            )  # sort_values()
-
-            if comb_index is None:
-                comb_index = self.symbol_data[symbol].index
-            else:
-                comb_index.union(self.symbol_data[symbol].index)
+            )
 
             self.latest_symbol_data[symbol] = []
 
-        for symbol in self.symbol_list:
-            self.symbol_data[symbol] = self.symbol_data[symbol].reindex(
-                index=comb_index, method='pad').iterrows()
-
-    def _get_new_bar(self, symbol):
-        """
-
-        :param symbol:
-        :return:
-        """
-        for b in self.symbol_data[symbol]:
-            yield b
+        #for symbol in self.symbol_list:
+        #    self.symbol_data[symbol] = self.symbol_data[symbol].reindex(
+        #        index=comb_index, method='pad').iterrows()
 
     def get_latest_bars(self, symbol, N:int = None):
         """
@@ -167,7 +152,7 @@ class HistoricalDataHandler(DataHandler):
             print("Input symbol is not in the historical data set")
             raise
         else:
-            return bars_list[-1][0]
+            return bars_list[-1].index.values()
 
     def get_latest_bar_values(self, symbol, val_type, N:int = None):
         """
@@ -196,20 +181,17 @@ class HistoricalDataHandler(DataHandler):
 
     def update_bars(self):
         for symbol in self.symbol_list:
-            try:
-                bar = next(self._get_new_bar(symbol))
-            except StopIteration:
-                self.continue_backtest = False
-            else:
-                if bar is not None:
-                    self.latest_symbol_data[symbol].append(bar)
-        self.events.put(MarketEvent())
+            bar = self.symbol_data[symbol].last('1D')
+            if bar is not None:
+                self.latest_symbol_data[symbol].append(bar)
+        # self.events.put(MarketEvent())
         # todo put???
 
 #%% test
 sp500 = ['bkng','expe']
-mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization'
-data500 = HistoricalDataHandler(MarketEvent(), sp500, mydir, 'csv')
+mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
+data500 = HistoricalDataHandler(events=MarketEvent(), symbol_list=sp500,
+                                csv_path=mydir, method='csv')
 
 
 
