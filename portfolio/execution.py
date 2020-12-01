@@ -32,6 +32,13 @@ class ExecutionHandler(Execution):
 
     """
 
+    def __init__(self, events):
+        """
+
+        :param events:
+        """
+        self.events = events
+
     def execute_order(self, event:OrderEvent):
         """
 
@@ -51,6 +58,6 @@ class ExecutionHandler(Execution):
 
 
 
-    
+
 
 
