@@ -6,7 +6,6 @@ __author__ = 'Han Xiao (Aaron)'
 
 from abc import ABCMeta, abstractmethod
 import datetime
-import os, os.path
 
 import numpy as np
 import pandas as pd
@@ -21,6 +20,14 @@ class DataHandler:
     """
 
     __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def update_bars(self):
+        """
+
+        :return:
+        """
+        raise NotImplementedError("Should implement update_bars()")
 
     @abstractmethod
     def get_latest_bars(self, symbol, N:int = None):
@@ -51,14 +58,6 @@ class DataHandler:
         :return:
         """
         raise NotImplementedError("Should implement get_latest_bar_values()")
-
-    @abstractmethod
-    def update_bars(self):
-        """
-
-        :return:
-        """
-        raise NotImplementedError("Should implement update_bars()")
 
 
 class HistoricalDataHandler(DataHandler):
@@ -104,8 +103,15 @@ class HistoricalDataHandler(DataHandler):
 
     def _open_convert_csv(self):
         """
+        Open csv based on symbol list.
 
-        :return:
+        Save data in dict attribute self.symbol_data[symbol] and
+        create the corresponding empty symbol in dict attribute
+        self.latest_symbol_data[symbol].
+
+        Example:
+        --------
+        self.latest_symbol_data = {symbol:[]}
         """
         for symbol in self.symbol_list:
             path = self.csv_path + '/{}.csv'.format(symbol)
@@ -117,12 +123,36 @@ class HistoricalDataHandler(DataHandler):
             )
 
             self.latest_symbol_data[symbol] = []
-
+        # todo time index combine
         #for symbol in self.symbol_list:
         #    self.symbol_data[symbol] = self.symbol_data[symbol].reindex(
         #        index=comb_index, method='pad').iterrows()
 
-    def get_latest_bars(self, symbol, N:int = None):
+    def update_bars(self, N: int = 1):
+        """
+        Loop over symbol list , update the latest N bars
+        info in dict attribute self.latest_symbol_data.
+
+        Example:
+        --------
+        self.latest_symbol_data = {symbol:[latest_N_bars]}
+        """
+        # todo: 哪种方式返回最新的bar
+        # 这里其实有个问题，如果我用last函数返回最后几个时间戳，但如果不是连续时间
+        # 要求3天，其实是可以只返回2天/1天的
+        # 所以使用iterrows来迭代行是可行的
+        # 根据后续组件的具体情况，看是否要进行修正
+
+        period = "{}D".format(N)
+
+        for symbol in self.symbol_list:
+            bar = self.symbol_data[symbol].last(period)
+            if bar is not None:
+                self.latest_symbol_data[symbol].append(bar)
+        # self.events.put(MarketEvent())
+        # todo put???
+
+    def get_latest_bars(self, symbol, N: int = None):
         """
 
         :param N:
@@ -136,25 +166,18 @@ class HistoricalDataHandler(DataHandler):
             raise
         else:
             if N is None:
-                return bars_list[-1:]
+                return bars_list[-1]
             else:
                 return bars_list[-N:]
 
-    def get_latest_bar_datetime(self, symbol):
+    def get_latest_bar_datetime(self, symbol:str):
         """
-
-        :param symbol:
-        :return:
+        Get info about the latest time index based on input symbol.
+        :return: numpy.datetime64
         """
-        try:
-            bars_list = self.latest_symbol_data[symbol]
-        except KeyError:
-            print("Input symbol is not in the historical data set")
-            raise
-        else:
-            return bars_list[-1].index.values()
+        return self.get_latest_bars(symbol).index.values[0]
 
-    def get_latest_bar_values(self, symbol, val_type, N:int = None):
+    def get_latest_bar_values(self, symbol, val_type:str, N:int = None):
         """
 
         :param symbol:
@@ -163,13 +186,7 @@ class HistoricalDataHandler(DataHandler):
         :return:
         """
         if N is None:
-            try:
-                bars_list = self.latest_symbol_data[symbol]
-            except KeyError:
-                print("Input symbol is not in the historical data set")
-                raise
-            else:
-                return getattr(bars_list[-1][1], val_type)
+            return getattr(self.get_latest_bars(symbol), val_type)
         else:
             try:
                 bars_list = self.get_latest_bars(symbol, N)
@@ -179,19 +196,19 @@ class HistoricalDataHandler(DataHandler):
             else:
                 return np.array([getattr(b[1], val_type) for b in bars_list])
 
-    def update_bars(self):
-        for symbol in self.symbol_list:
-            bar = self.symbol_data[symbol].last('1D')
-            if bar is not None:
-                self.latest_symbol_data[symbol].append(bar)
-        # self.events.put(MarketEvent())
-        # todo put???
+
 
 #%% test
 sp500 = ['bkng','expe']
 mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
 data500 = HistoricalDataHandler(events=MarketEvent(), symbol_list=sp500,
                                 csv_path=mydir, method='csv')
+df = pd.read_csv(
+                mydir+'/bkng.csv', header=0, index_col=0, parse_dates=True,
+                names = [
+                    'datetime', 'high', 'low', 'open', 'close', 'volume', 'adj_close'
+                ]
+            )
 
 
 

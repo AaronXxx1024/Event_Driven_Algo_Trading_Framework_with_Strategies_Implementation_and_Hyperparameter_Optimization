@@ -25,13 +25,13 @@ class SignalEvent(Event):
 
     """
 
-    def __init__(self, strategy, symbol, datetime, signal_type, strength):
+    def __init__(self, strategy, symbol:str, datetime, signal_type:str, strength):
         """
 
         :param strategy:
         :param symbol:
         :param datetime:
-        :param signal_type:
+        :param signal_type: 'long', 'short' or 'exit'
         :param strength:
         """
         self.type = 'Signal'
@@ -47,13 +47,13 @@ class OrderEvent(Event):
 
     """
 
-    def __init__(self, symbol, order_type, quantity, direction, currency: str = None):
+    def __init__(self, symbol:str, order_type:str, quantity:int, direction:str, currency: str = None):
         """
 
         :param symbol:
-        :param order_type:
+        :param order_type: 'market' or 'limit'
         :param quantity:
-        :param direction:
+        :param direction: 'buy' or 'sell'
         """
 
         self.type = 'Order'
@@ -78,7 +78,7 @@ class FillEvent(Event):
 
     """
 
-    def __init__(self, time_stamp, symbol, exchange, quantity, direction,
+    def __init__(self, time_stamp, symbol:str, exchange, quantity, direction:str,
                  fill_cost, commission=None, currency: str = None):
         """
 
