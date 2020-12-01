@@ -4,16 +4,8 @@
 
 __author__ = "Han Xiao (Aaron)"
 
-import datetime
-from math import floor
-import queue
-
-import numpy as np
-import pandas as pd
-
-from event import Event, FillEvent, OrderEvent, SignalEvent
+from event import FillEvent, OrderEvent, SignalEvent
 from data.data import HistoricalDataHandler
-import performance
 
 
 class Portfolio:
