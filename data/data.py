@@ -1,5 +1,19 @@
 """
-处理数据并与框架的其他组成部分完成联动
+Component unit class: HistoricalDataHandler(DataHandler)
+--------------------------------------------------------
+
+where DataHandler is an abstract base class, with mandatory
+functions that could be used for picking up and processing
+data.
+
+In HistoricalDataHandler, there are 3 ways that you can access
+data (Online Source(like Yahoo), local csv file and SQL).
+
+Todo: more data-cleaning functions used in time-series data, factor model or machine learning
+
+Within Framework:
+-----------------
+
 """
 
 __author__ = 'Han Xiao (Aaron)'
@@ -10,6 +24,7 @@ from queue import Queue
 
 import numpy as np
 import pandas as pd
+import modin.pandas as mpd
 from pandas_datareader import DataReader
 
 from event import MarketEvent
@@ -72,8 +87,8 @@ class HistoricalDataHandler(DataHandler):
     """
 
     def __init__(self,
-                 events:Queue,
-                 symbol_list:list,
+                 symbol_list: list,
+                 events:Queue = Queue(),
                  csv_path:str = None,
                  method='csv',
                  start=None,
@@ -156,8 +171,7 @@ class HistoricalDataHandler(DataHandler):
             bar = self.symbol_data[symbol].last(period)
             if bar is not None:
                 self.latest_symbol_data[symbol].append(bar)
-        # self.events.put(MarketEvent())
-        # todo put???
+        self.events.put(MarketEvent())
 
     def get_latest_bars(self, symbol, N: int = None):
         """
@@ -208,14 +222,30 @@ class HistoricalDataHandler(DataHandler):
 #%% test
 sp500 = ['bkng','expe']
 mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
-data500 = HistoricalDataHandler(events=MarketEvent(), symbol_list=sp500,
-                                csv_path=mydir, method='csv')
+data500 = HistoricalDataHandler(symbol_list=sp500,
+                                csv_path=mydir,
+                                method='csv')
 df = pd.read_csv(
                 mydir+'/bkng.csv', header=0, index_col=0, parse_dates=True,
                 names = [
                     'datetime', 'high', 'low', 'open', 'close', 'volume', 'adj_close'
                 ]
             )
+
+#%%
+from timeit import Timer
+sp500 = ['bkng','expe']
+mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
+def read(path, slist):
+    data = {}
+    for s in slist:
+        p = path+'/{}.csv'.format(s)
+        data[s] = pd.read_csv(p)
+    return data
+
+#t1 = Timer("old(mydir, sp500)", "from __main__ import old,mydir,sp500")
+#print(t1.repeat(5,20))
+
 
 
 
