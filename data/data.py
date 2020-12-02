@@ -6,13 +6,15 @@ __author__ = 'Han Xiao (Aaron)'
 
 from abc import ABCMeta, abstractmethod
 import datetime
+from queue import Queue
 
 import numpy as np
 import pandas as pd
+from pandas_datareader import DataReader
 
 from event import MarketEvent
+from data import data_process as dp
 
-from pandas_datareader import DataReader
 
 class DataHandler:
     """
@@ -70,10 +72,10 @@ class HistoricalDataHandler(DataHandler):
     """
 
     def __init__(self,
-                 events,
+                 events:Queue,
                  symbol_list:list,
                  csv_path:str = None,
-                 method='online',
+                 method='csv',
                  start=None,
                  end=None):
         """

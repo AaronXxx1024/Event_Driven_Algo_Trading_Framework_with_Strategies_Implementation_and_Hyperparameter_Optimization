@@ -18,7 +18,7 @@ class Execution:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def execute_order(self, event):
+    def execute_order(self, event:OrderEvent):
         """
 
         :param event:
@@ -52,9 +52,9 @@ class ExecutionHandler(Execution):
                 exchange='ARCA',
                 quantity=event.quantity,
                 direction=event.direction,
-                commission=None
-            )
+                commission=None)
 
+            return fill_event
 
 
 

@@ -72,7 +72,7 @@ class Backtest:
                                                   csv_path=self.csv_path,
                                                   method='csv')
         #todo 策略部分需根据具体策略或者策略类进行调整
-        self.strategy = Strategy()
+        # self.strategy = Strategy()
         self.portfolio = Portfolio(bars=self.data_handler,
                                    events=self.event,
                                    start= self.start,

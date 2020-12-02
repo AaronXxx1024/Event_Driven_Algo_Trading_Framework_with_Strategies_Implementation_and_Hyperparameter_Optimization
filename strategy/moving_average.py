@@ -81,9 +81,13 @@ if __name__ == '__main__':
                    initial_capital=initial_capital,
                    heartbeat=heartbeat,
                    start=start,
-                   data_handler=HistoricalDataHandler(),
+                   data_handler=HistoricalDataHandler(events=None,
+                                                      symbol_list=symbol_list,
+                                                      csv_path=csv_path,
+                                                      method='csv',
+                                                      start=start),
                    execution_handler=ExecutionHandler(),
-                   portfolio=Portfolio(),
+                   # portfolio=Portfolio(),
                    strategy=MovingAverageCross()
                    )
 
