@@ -79,8 +79,55 @@ class Backtest:
                                    initial_capital=self.initial_capital)
         self.execution_handler = ExecutionHandler(events=self.event)
 
+    def _run_backtest(self):
+        """
 
-    
+        :return:
+        """
+        i = 0
+        while True:
+            i += 1
+            print(i)
+            # Update the market bars
+            if self.data_handler.continue_backtest:
+                self.data_handler.update_bars()
+            else:
+                break
 
+            # Handle the events
+            while True:
+                try:
+                    event = self.event.get(False)
+                except queue.Empty:
+                    break
+                else:
+                    if event is not None:
+                        if event.type == "Market":
+                            self.strategy.calculate_signals()
+                            self.portfolio.update_time_index(event)
+                        elif event.type == "Signal":
+                            self.signals += 1
+                            self.portfolio.update_signal(event)
+                        elif event.type == "Order":
+                            self.orders += 1
+                            self.execution_handler.execute_order(event)
+                        elif event.type == "Fill":
+                            self.fill += 1
+                            self.portfolio.update_fill(event)
 
+            time.sleep(self.heartbeat)
 
+    def _output_performance(self):
+        """
+
+        :return:
+        """
+        pass
+
+    def simulate_trading(self):
+        """
+
+        :return:
+        """
+        self._run_backtest()
+        self._output_performance()

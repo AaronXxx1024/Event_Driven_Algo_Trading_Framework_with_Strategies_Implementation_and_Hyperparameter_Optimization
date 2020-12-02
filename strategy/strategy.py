@@ -23,7 +23,7 @@ class Strategy:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def calculate_signals(self):
+    def calculate_signals(self, event):
         """
 
         :return:

@@ -69,8 +69,13 @@ class HistoricalDataHandler(DataHandler):
     :param method:
     """
 
-    def __init__(self, events, symbol_list:list, csv_path:str = None, method='online',
-                 start=None, end=None):
+    def __init__(self,
+                 events,
+                 symbol_list:list,
+                 csv_path:str = None,
+                 method='online',
+                 start=None,
+                 end=None):
         """
 
         """
