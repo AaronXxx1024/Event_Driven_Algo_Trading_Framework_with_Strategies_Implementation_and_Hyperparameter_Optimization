@@ -5,6 +5,7 @@
 __author__ = "Han Xiao (Aaron)"
 
 import datetime
+import queue
 
 import numpy as np
 import pandas as pd
@@ -24,8 +25,11 @@ class MovingAverageCross(Strategy):
 
     """
 
-    def __init__(self, bars:HistoricalDataHandler,
-                 events, short_window:int = 100, long_window:int = 400):
+    def __init__(self,
+                 bars:HistoricalDataHandler,
+                 events:queue.Queue,
+                 short_window:int = 100,
+                 long_window:int = 400):
         """
 
         :param bars:
@@ -70,24 +74,20 @@ class MovingAverageCross(Strategy):
 
 
 if __name__ == '__main__':
-    csv_path = ''
+    csv_path = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
     symbol_list = ['bkng']
     initial_capital = 100000.0
     heartbeat = 0.0
-    start = None
+    start = datetime.datetime(2015,11,27,0,0,0)
 
     mac = Backtest(csv_path=csv_path,
                    symbol_list=symbol_list,
                    initial_capital=initial_capital,
                    heartbeat=heartbeat,
                    start=start,
-                   data_handler=HistoricalDataHandler(events=None,
-                                                      symbol_list=symbol_list,
-                                                      csv_path=csv_path,
-                                                      method='csv',
-                                                      start=start),
+                   data_handler=HistoricalDataHandler(),
                    execution_handler=ExecutionHandler(),
-                   # portfolio=Portfolio(),
+                   portfolio=Portfolio(),
                    strategy=MovingAverageCross()
                    )
 

@@ -17,7 +17,7 @@ class Portfolio:
 
     def __init__(self,
                  bars: HistoricalDataHandler,
-                 events:queue,
+                 events:queue.Queue,
                  start,
                  initial_capital=100000.0):
         """

@@ -32,7 +32,7 @@ class ExecutionHandler(Execution):
 
     """
 
-    def __init__(self, events):
+    def __init__(self, events:queue.Queue):
         """
 
         :param events:
@@ -53,8 +53,8 @@ class ExecutionHandler(Execution):
                 quantity=event.quantity,
                 direction=event.direction,
                 commission=None)
+            self.events.put(fill_event)
 
-            return fill_event
 
 
 

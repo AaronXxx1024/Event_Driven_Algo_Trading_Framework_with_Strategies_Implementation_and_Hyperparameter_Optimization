@@ -22,8 +22,8 @@ class Backtest:
     """
 
     def __init__(self,
-                 csv_path,
-                 symbol_list,
+                 csv_path:str,
+                 symbol_list:list,
                  initial_capital,
                  heartbeat,
                  start,
@@ -71,8 +71,8 @@ class Backtest:
                                                   symbol_list=self.symbol_list,
                                                   csv_path=self.csv_path,
                                                   method='csv')
-        #todo 策略部分需根据具体策略或者策略类进行调整
-        # self.strategy = Strategy()
+
+        self.strategy = Strategy()
         self.portfolio = Portfolio(bars=self.data_handler,
                                    events=self.event,
                                    start= self.start,
@@ -84,10 +84,8 @@ class Backtest:
 
         :return:
         """
-        i = 0
         while True:
-            i += 1
-            print(i)
+
             # Update the market bars
             if self.data_handler.continue_backtest:
                 self.data_handler.update_bars()
@@ -103,14 +101,17 @@ class Backtest:
                 else:
                     if event is not None:
                         if event.type == "Market":
-                            self.strategy.calculate_signals()
+                            self.strategy.calculate_signals(event)
                             self.portfolio.update_time_index(event)
+
                         elif event.type == "Signal":
                             self.signals += 1
                             self.portfolio.update_signal(event)
+
                         elif event.type == "Order":
                             self.orders += 1
                             self.execution_handler.execute_order(event)
+
                         elif event.type == "Fill":
                             self.fill += 1
                             self.portfolio.update_fill(event)

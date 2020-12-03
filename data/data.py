@@ -87,8 +87,8 @@ class HistoricalDataHandler(DataHandler):
     """
 
     def __init__(self,
+                 events: Queue,
                  symbol_list: list,
-                 events:Queue = Queue(),
                  csv_path:str = None,
                  method='csv',
                  start=None,
@@ -225,67 +225,3 @@ class HistoricalDataHandler(DataHandler):
                 raise
             else:
                 return np.array([getattr(b[1], val_type) for b in bars_list])
-
-#%%
-from timeit import Timer
-sp500 = ['bkng','expe']
-mydir = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
-def read(path, slist):
-    data = {}
-    for s in slist:
-        p = path+'/{}.csv'.format(s)
-        data[s] = pd.read_csv(p)
-    return data
-
-#t1 = Timer("old(mydir, sp500)", "from __main__ import old,mydir,sp500")
-#print(t1.repeat(5,20))
-a = pd.read_csv(mydir + '/bkng.csv',header=0, index_col=0, parse_dates=True,
-                names = [
-                    'datetime', 'high', 'low', 'open', 'close', 'volume', 'adj_close'
-                ])
-#%%
-def loop_1(df, N=100):
-    period = "{}D".format(N)
-    result = []
-    bar = df.last(period)
-    result.append(bar)
-    return result
-
-def loop_2(df, N=100):
-    result = []
-    result.append(df.iloc[-N:])
-    return result
-
-def loop_3(df:pd.DataFrame, N=100):
-    result = []
-    bars = df.iloc[-N:].iterrows()
-    for _ in range(N):
-        result.append(next(bars))
-    return result
-
-a1 = loop_1(a)
-a2 = loop_2(a)
-a3 = loop_3(a)
-
-t1 = Timer("loop_1(a)", "from __main__ import loop_1, a")
-t2 = Timer("loop_2(a)", "from __main__ import loop_2, a")
-t3 = Timer("loop_3(a)", "from __main__ import loop_3, a")
-print(t1.repeat(3,10))
-print(t2.repeat(3,10))
-print(t3.repeat(3,10))
-#%%
-data = HistoricalDataHandler(symbol_list=sp500, csv_path=mydir)
-record = []
-
-while True:
-    if data.continue_backtest:
-        data.update_bars()
-    else:
-        break
-
-    bars = data.get_latest_bar_values('bkng', 'adj_close', 100)
-    if bars is not None and bars != []:
-        short = np.mean(bars[-30:])
-        long = np.mean(bars[-100:])
-        record.append((short,long))
-
