@@ -157,7 +157,7 @@ class HistoricalDataHandler(DataHandler):
             self.symbol_data[symbol] = self.symbol_data[symbol].reindex(
                 index=combined_index, method='pad').iterrows()
 
-    def update_bars(self, N: int = 1):
+    def update_bars(self):
         """
         Loop over symbol list , update the latest N bars
         info in dict attribute self.latest_symbol_data.
@@ -182,7 +182,7 @@ class HistoricalDataHandler(DataHandler):
                     self.latest_symbol_data[symbol].append(bar)
         self.events.put(MarketEvent())
 
-    def get_latest_bars(self, symbol, N: int = None):
+    def get_latest_bars(self, symbol:str, N: int = None):
         """
 
         :param N:
@@ -205,7 +205,7 @@ class HistoricalDataHandler(DataHandler):
         Get info about the latest time index based on input symbol.
         :return: numpy.datetime64
         """
-        return self.get_latest_bars(symbol).index.values[0]
+        return self.get_latest_bars(symbol)[-1][0]
 
     def get_latest_bar_values(self, symbol, val_type:str, N:int = None):
         """
@@ -276,8 +276,7 @@ print(t3.repeat(3,10))
 #%%
 data = HistoricalDataHandler(symbol_list=sp500, csv_path=mydir)
 record = []
-for _ in range(100):
-    data.update_bars()
+
 while True:
     if data.continue_backtest:
         data.update_bars()
