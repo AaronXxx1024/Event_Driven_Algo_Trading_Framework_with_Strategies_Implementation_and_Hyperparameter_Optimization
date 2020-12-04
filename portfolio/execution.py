@@ -52,6 +52,7 @@ class ExecutionHandler(Execution):
                 exchange='ARCA',
                 quantity=event.quantity,
                 direction=event.direction,
+                fill_cost=0,
                 commission=None)
             self.events.put(fill_event)
 
