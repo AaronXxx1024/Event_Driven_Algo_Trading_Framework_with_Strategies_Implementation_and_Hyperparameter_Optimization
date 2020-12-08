@@ -88,4 +88,4 @@ if __name__ == '__main__':
                    start=start,
                    strategy=MovingAverageCross)
 
-    mac.simulate_trading()
+    mac.backtesting()
