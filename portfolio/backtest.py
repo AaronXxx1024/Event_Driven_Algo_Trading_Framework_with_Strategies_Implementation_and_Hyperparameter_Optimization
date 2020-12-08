@@ -27,7 +27,11 @@ class Backtest:
                  initial_capital,
                  heartbeat,
                  start,
-                 strategy=Strategy):
+                 strategy:Strategy,
+                 data_handler=HistoricalDataHandler,
+                 portfolio=Portfolio,
+                 execution_handler=ExecutionHandler
+                 ):
         """
 
         :param csv_path:
@@ -40,19 +44,23 @@ class Backtest:
         :param portfolio:
         :param strategy:
         """
+
         self.csv_path = csv_path
         self.symbol_list = symbol_list
         self.initial_capital = initial_capital
         self.heartbeat = heartbeat
         self.start = start
 
-        self.data_handler = HistoricalDataHandler(events=self.event,
+        self.data_handler = data_handler(events=self.event,
                                                   symbol_list=self.symbol_list,
                                                   csv_path=self.csv_path,
                                                   method='csv')
-        self.portfolio = Portfolio
-        self.strategy = Strategy
-        self.execution_handler = ExecutionHandler
+        self.portfolio = portfolio(bars=self.data_handler,
+                                   events=self.event,
+                                   start= self.start,
+                                   initial_capital=self.initial_capital)
+        self.strategy = strategy
+        self.execution_handler = execution_handler(events=self.event)
 
         self.event = queue.Queue()
 
@@ -61,7 +69,7 @@ class Backtest:
         self.fill = 0
         self.num_starts = 1
 
-        self._generate_trading_instances()
+        # self._generate_trading_instances()
 
     def _generate_trading_instances(self):
         """

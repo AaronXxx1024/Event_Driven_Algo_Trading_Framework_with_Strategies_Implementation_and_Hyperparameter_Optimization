@@ -18,7 +18,7 @@ from strategy.strategy import Strategy
 from portfolio.portfolio import Portfolio
 from portfolio.backtest import Backtest
 from portfolio.execution import ExecutionHandler
-#%%
+
 
 class MovingAverageCross(Strategy):
     """
