@@ -13,7 +13,6 @@ import time
 from data.data import HistoricalDataHandler
 from portfolio.execution import ExecutionHandler
 from portfolio.portfolio import Portfolio
-from strategy.strategy_base import Strategy
 
 
 class Backtest:
@@ -128,7 +127,7 @@ class Backtest:
         """
         pass
 
-    def simulate_trading(self):
+    def backtesting(self):
         """
 
         :return:

@@ -225,14 +225,3 @@ class HistoricalDataHandler(DataHandler):
                 raise
             else:
                 return np.array([getattr(b[1], val_type) for b in bars_list])
-
-#%%
-event = Queue()
-csv = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
-slist = ['bkng']
-dt = HistoricalDataHandler(event,slist, csv)
-while True:
-    if dt.continue_backtest:
-        dt.update_bars()
-    else:
-        break
