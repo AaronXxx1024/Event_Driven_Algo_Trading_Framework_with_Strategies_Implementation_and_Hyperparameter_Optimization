@@ -23,12 +23,12 @@ class Strategy:
 
     __metaclass__ = ABCMeta
 
-    #def __init__(self, data:HistoricalDataHandler, event:queue.Queue):
-    #    self.data = data
-    #    self.event = event
+    def __init__(self, data:HistoricalDataHandler, event:queue.Queue):
+        self.data = data
+        self.event = event
 
     @abstractmethod
-    def calculate_signals(self, event):
+    def calculate_signals(self, event:SignalEvent):
         """
 
         :return:

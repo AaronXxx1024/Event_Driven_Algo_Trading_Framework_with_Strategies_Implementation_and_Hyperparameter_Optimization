@@ -74,7 +74,6 @@ class Portfolio:
     def update_time_index(self, event):
         """
 
-        :param event:
         :return:
         """
         latest_datetime = self.bars.get_latest_bar_datetime(self.symbol_list[0])

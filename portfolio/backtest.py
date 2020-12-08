@@ -13,7 +13,7 @@ import time
 from data.data import HistoricalDataHandler
 from portfolio.execution import ExecutionHandler
 from portfolio.portfolio import Portfolio
-from strategy.strategy import Strategy
+from strategy.strategy_base import Strategy
 
 
 class Backtest:
@@ -27,7 +27,7 @@ class Backtest:
                  initial_capital,
                  heartbeat,
                  start,
-                 strategy:Strategy,
+                 strategy,
                  data_handler=HistoricalDataHandler,
                  portfolio=Portfolio,
                  execution_handler=ExecutionHandler
@@ -50,19 +50,18 @@ class Backtest:
         self.initial_capital = initial_capital
         self.heartbeat = heartbeat
         self.start = start
+        self.event = queue.Queue()
 
         self.data_handler = data_handler(events=self.event,
-                                                  symbol_list=self.symbol_list,
-                                                  csv_path=self.csv_path,
-                                                  method='csv')
+                                         symbol_list=self.symbol_list,
+                                         csv_path=self.csv_path,
+                                         method='csv')
         self.portfolio = portfolio(bars=self.data_handler,
                                    events=self.event,
                                    start= self.start,
                                    initial_capital=self.initial_capital)
-        self.strategy = strategy
+        self.strategy = strategy(self.data_handler, self.event)
         self.execution_handler = execution_handler(events=self.event)
-
-        self.event = queue.Queue()
 
         self.signals = 0
         self.orders = 0

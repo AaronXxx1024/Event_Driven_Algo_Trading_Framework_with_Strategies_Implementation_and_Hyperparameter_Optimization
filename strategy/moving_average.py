@@ -14,7 +14,7 @@ import statsmodels.api as sm
 # Component unit class
 from event import SignalEvent
 from data.data import HistoricalDataHandler
-from strategy.strategy import Strategy
+from strategy.strategy_base import Strategy
 from portfolio.portfolio import Portfolio
 from portfolio.backtest import Backtest
 from portfolio.execution import ExecutionHandler
@@ -26,20 +26,21 @@ class MovingAverageCross(Strategy):
     """
 
     def __init__(self,
-                 bars:HistoricalDataHandler,
-                 events:queue.Queue,
-                 short_window:int = 100,
-                 long_window:int = 400):
+                 data: HistoricalDataHandler,
+                 event: queue.Queue,
+                 short_window: int = 100,
+                 long_window: int = 400):
         """
 
-        :param bars:
-        :param events:
+        :param data:
+        :param event:
         :param short_window:
         :param long_window:
         """
-        self.bars = bars
+        super().__init__(data, event)
+        self.bars = data
+        self.events = event
         self.symbol_list = self.bars.symbol_list
-        self.events = events
         self.short_window = short_window
         self.long_window = long_window
 
@@ -85,7 +86,6 @@ if __name__ == '__main__':
                    initial_capital=initial_capital,
                    heartbeat=heartbeat,
                    start=start,
-                   strategy=MovingAverageCross
-                   )
+                   strategy=MovingAverageCross)
 
     mac.simulate_trading()
