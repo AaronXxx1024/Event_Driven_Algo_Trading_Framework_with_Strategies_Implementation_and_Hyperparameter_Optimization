@@ -27,10 +27,7 @@ class Backtest:
                  initial_capital,
                  heartbeat,
                  start,
-                 data_handler:HistoricalDataHandler,
-                 execution_handler:ExecutionHandler,
-                 portfolio:Portfolio,
-                 strategy:Strategy):
+                 strategy=Strategy):
         """
 
         :param csv_path:
@@ -48,10 +45,14 @@ class Backtest:
         self.initial_capital = initial_capital
         self.heartbeat = heartbeat
         self.start = start
-        self.data_handler = data_handler
-        self.portfolio = portfolio
-        self.strategy = strategy
-        self.execution_handler = execution_handler
+
+        self.data_handler = HistoricalDataHandler(events=self.event,
+                                                  symbol_list=self.symbol_list,
+                                                  csv_path=self.csv_path,
+                                                  method='csv')
+        self.portfolio = Portfolio
+        self.strategy = Strategy
+        self.execution_handler = ExecutionHandler
 
         self.event = queue.Queue()
 
@@ -67,12 +68,7 @@ class Backtest:
 
 
         """
-        self.data_handler = HistoricalDataHandler(events=self.event,
-                                                  symbol_list=self.symbol_list,
-                                                  csv_path=self.csv_path,
-                                                  method='csv')
-
-        self.strategy = Strategy()
+        # self.strategy = Strategy()
         self.portfolio = Portfolio(bars=self.data_handler,
                                    events=self.event,
                                    start= self.start,

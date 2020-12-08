@@ -18,7 +18,7 @@ from strategy.strategy import Strategy
 from portfolio.portfolio import Portfolio
 from portfolio.backtest import Backtest
 from portfolio.execution import ExecutionHandler
-
+#%%
 
 class MovingAverageCross(Strategy):
     """
@@ -85,10 +85,7 @@ if __name__ == '__main__':
                    initial_capital=initial_capital,
                    heartbeat=heartbeat,
                    start=start,
-                   data_handler=HistoricalDataHandler(),
-                   execution_handler=ExecutionHandler(),
-                   portfolio=Portfolio(),
-                   strategy=MovingAverageCross()
+                   strategy=MovingAverageCross
                    )
 
     mac.simulate_trading()
