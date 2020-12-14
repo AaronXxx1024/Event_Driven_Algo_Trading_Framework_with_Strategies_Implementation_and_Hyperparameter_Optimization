@@ -105,6 +105,31 @@ class Portfolio:
             holding['total'] += market_value
         self.all_holdings.append(holding)
 
+    def generate_order(self, signal:SignalEvent, quantity:int = 100, order_type:str = 'market'):
+        """
+
+        :param signal:
+        :param quantity:
+        :param order_type:
+        :return:
+        """
+        if order_type == 'market':
+            cur_positions = self.current_positions[signal.symbol]
+            if signal.signal_type == 'long' and cur_positions == 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='buy')
+            elif signal.signal_type == 'short' and cur_positions == 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='sell')
+            elif signal.signal_type == 'exit' and cur_positions > 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=cur_positions, direction='sell')
+            elif signal.signal_type == 'exit' and cur_positions < 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=abs(cur_positions), direction='buy')
+        else:
+            pass
+
+    def update_signal(self, event:SignalEvent):
+        if event.type == 'Signal':
+            self.events.put(self.generate_order(event))
+
     def update_positions_from_FillEvent(self, fill:FillEvent):
         """
 
@@ -137,31 +162,6 @@ class Portfolio:
         if fill.type == 'Fill':
             self.update_positions_from_FillEvent(fill)
             self.update_holdings_from_FillEvent(fill)
-
-    def generate_order(self, signal:SignalEvent, quantity:int = 100, order_type:str = 'market'):
-        """
-
-        :param signal:
-        :param quantity:
-        :param order_type:
-        :return:
-        """
-        if order_type == 'market':
-            cur_positions = self.current_positions[signal.symbol]
-            if signal.signal_type == 'long' and cur_positions == 0:
-                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='buy')
-            elif signal.signal_type == 'short' and cur_positions == 0:
-                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='sell')
-            elif signal.signal_type == 'exit' and cur_positions > 0:
-                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=cur_positions, direction='sell')
-            elif signal.signal_type == 'exit' and cur_positions < 0:
-                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=abs(cur_positions), direction='buy')
-        else:
-            pass
-
-    def update_signal(self, event:SignalEvent):
-        if event.type == 'Signal':
-            self.events.put(self.generate_order(event))
 
     def create_equity_curve_df(self):
         """
