@@ -19,7 +19,6 @@ Within Framework:
 __author__ = 'Han Xiao (Aaron)'
 
 from abc import ABCMeta, abstractmethod
-import datetime
 from queue import Queue
 
 import numpy as np
@@ -126,7 +125,7 @@ class HistoricalDataHandler(DataHandler):
     def _open_convert_csv(self):
         """
         Open csv based on symbol list.
-
+        --------------------------------------------------------
         Save data in dict attribute self.symbol_data[symbol] and
         create the corresponding empty symbol in dict attribute
         self.latest_symbol_data[symbol].
