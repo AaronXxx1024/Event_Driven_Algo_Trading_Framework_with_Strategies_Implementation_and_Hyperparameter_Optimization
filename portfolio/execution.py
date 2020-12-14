@@ -6,7 +6,7 @@ __author__ = "Han Xiao (Aaron)"
 
 from abc import ABCMeta, abstractmethod
 import datetime
-import queue
+from queue import Queue
 
 from event import FillEvent, OrderEvent
 
@@ -32,7 +32,7 @@ class ExecutionHandler(Execution):
 
     """
 
-    def __init__(self, events:queue.Queue):
+    def __init__(self, events:Queue):
         """
 
         :param events:
@@ -52,6 +52,7 @@ class ExecutionHandler(Execution):
                 exchange='ARCA',
                 quantity=event.quantity,
                 direction=event.direction,
+                # set fill_cost to 0 since we use historical close price for stock purchase cost
                 fill_cost=0,
                 commission=None)
             self.events.put(fill_event)
