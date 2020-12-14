@@ -5,14 +5,14 @@
 __author__ = "Han Xiao (Aaron)"
 
 import datetime
-import queue
+from queue import Queue
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 
 # Component unit class
-from event import SignalEvent
+from event import SignalEvent, MarketEvent
 from data.data import HistoricalDataHandler
 from strategy.strategy_base import Strategy
 from portfolio.portfolio import Portfolio
@@ -27,7 +27,7 @@ class MovingAverageCross(Strategy):
 
     def __init__(self,
                  data: HistoricalDataHandler,
-                 event: queue.Queue,
+                 event: Queue,
                  short_window: int = 100,
                  long_window: int = 400):
         """
@@ -46,7 +46,7 @@ class MovingAverageCross(Strategy):
 
         self.bought = {symbol:'out' for symbol in self.symbol_list}
 
-    def calculate_signals(self, event):
+    def calculate_signals(self, event:MarketEvent):
         """
 
         :param event:

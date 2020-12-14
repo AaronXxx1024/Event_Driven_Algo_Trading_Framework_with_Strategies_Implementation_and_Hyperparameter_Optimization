@@ -4,7 +4,7 @@
 
 __author__ = "Han Xiao (Aaron)"
 
-import queue
+from queue import Queue
 
 from event import FillEvent, OrderEvent, SignalEvent
 from data.data import HistoricalDataHandler
@@ -17,7 +17,7 @@ class Portfolio:
 
     def __init__(self,
                  bars: HistoricalDataHandler,
-                 events:queue.Queue,
+                 events: Queue,
                  start,
                  initial_capital=100000.0):
         """

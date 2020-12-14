@@ -25,7 +25,7 @@ class SignalEvent(Event):
 
     """
 
-    def __init__(self, strategy, symbol:str, datetime, signal_type:str, strength):
+    def __init__(self, strategy, symbol:str, datetime, signal_type:str, strength:float):
         """
 
         :param strategy:

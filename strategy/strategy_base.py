@@ -7,12 +7,9 @@ __author__ = "Han Xiao (Aaron)"
 from abc import ABCMeta, abstractmethod
 
 import datetime
-import queue
+from queue import Queue
 
-import numpy as np
-import pandas as pd
-
-from event import SignalEvent
+from event import MarketEvent
 from data.data import HistoricalDataHandler
 
 
@@ -23,12 +20,12 @@ class Strategy:
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, data:HistoricalDataHandler, event:queue.Queue):
+    def __init__(self, data:HistoricalDataHandler, event:Queue):
         self.data = data
         self.event = event
 
     @abstractmethod
-    def calculate_signals(self, event:SignalEvent):
+    def calculate_signals(self, event:MarketEvent):
         """
 
         :return:
