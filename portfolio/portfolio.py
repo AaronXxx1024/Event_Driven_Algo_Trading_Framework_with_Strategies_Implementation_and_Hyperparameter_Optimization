@@ -6,6 +6,8 @@ __author__ = "Han Xiao (Aaron)"
 
 from queue import Queue
 
+import pandas as pd
+
 from event import FillEvent, OrderEvent, SignalEvent
 from data.data import HistoricalDataHandler
 
@@ -38,6 +40,8 @@ class Portfolio:
 
         self.all_holdings = self.construct_all_holdings()
         self.current_holdings = self.construct_current_holdings()
+
+        self. equity_curve = None
 
     def construct_all_positions(self):
         """
@@ -93,6 +97,7 @@ class Portfolio:
         holding['commission'] = self.current_holdings['commission']
         holding['total'] = self.current_holdings['cash']
 
+        # recalculate the market value of holding tickers
         for symbol in self.symbol_list:
             market_value = self.current_holdings[symbol] * \
                            self.bars.get_latest_bar_values(symbol=symbol, val_type='adj_close')
@@ -141,22 +146,33 @@ class Portfolio:
         :param order_type:
         :return:
         """
-        cur_positions = self.current_positions[signal.symbol]
-        if signal.signal_type == 'long' and cur_positions == 0:
-            return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='buy')
-        elif signal.signal_type == 'short' and cur_positions == 0:
-            return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='sell')
-        elif signal.signal_type == 'exit' and cur_positions > 0:
-            return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='sell')
-        elif signal.signal_type == 'exit' and cur_positions < 0:
-            return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=abs(quantity), direction='buy')
+        if order_type == 'market':
+            cur_positions = self.current_positions[signal.symbol]
+            if signal.signal_type == 'long' and cur_positions == 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='buy')
+            elif signal.signal_type == 'short' and cur_positions == 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=quantity, direction='sell')
+            elif signal.signal_type == 'exit' and cur_positions > 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=cur_positions, direction='sell')
+            elif signal.signal_type == 'exit' and cur_positions < 0:
+                return OrderEvent(symbol=signal.symbol, order_type=order_type, quantity=abs(cur_positions), direction='buy')
+        else:
+            pass
 
     def update_signal(self, event:SignalEvent):
         if event.type == 'Signal':
             self.events.put(self.generate_order(event))
 
     def create_equity_curve_df(self):
-        pass
+        """
+
+        :return:
+        """
+        equity = pd.DataFrame(self.all_holdings)
+        equity.set_index(keys='datetime', inplace=True)
+        equity['return'] = equity['total'].pct_change()
+        equity['equity_curve'] = (1.0 + equity['return']).cumprod()
+        self.equity_curve = equity
 
     def output_summary_stats(self):
         pass
