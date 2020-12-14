@@ -41,7 +41,7 @@ class Portfolio:
 
     def construct_all_positions(self):
         """
-
+        Market positions of holding tickers.
         :return:
         """
         position = {symbol:0 for symbol in self.symbol_list}
@@ -50,14 +50,14 @@ class Portfolio:
 
     def construct_all_holdings(self):
         """
-
+        Market value of holding tickers positions.
         :return:
         """
         holding = {symbol:0.0 for symbol in self.symbol_list}
         holding['datetime'] = self.start
         holding['cash'] = self.initial_capital
         holding['commission'] = 0.0
-        holding['balance'] = self.initial_capital
+        holding['total'] = self.initial_capital
         return [holding]
 
     def construct_current_holdings(self):
