@@ -27,12 +27,13 @@ import modin.pandas as mpd
 from pandas_datareader import DataReader
 
 from event import MarketEvent
-from data import data_process as dp
 
 
 class DataHandler:
     """
-
+    An abstract base class. It will be used for standardization of
+    extensive data component class cooperated with other component
+    class.
     """
 
     __metaclass__ = ABCMeta
@@ -202,15 +203,15 @@ class HistoricalDataHandler(DataHandler):
     def get_latest_bar_datetime(self, symbol:str):
         """
         Get info about the latest time index based on input symbol.
-        :return: numpy.datetime64
+        :return: pandas.Timestamp
         """
-        return self.get_latest_bars(symbol)[-1][0]
+        return self.get_latest_bars(symbol)[0]
 
-    def get_latest_bar_values(self, symbol, val_type:str, N:int = None):
+    def get_latest_bar_values(self, symbol:str, val_type:str, N:int = None):
         """
 
         :param symbol:
-        :param val_type:
+        :param val_type: Select one of {'high', 'low', 'open', 'close', 'volume', 'adj_close'}
         :param N:
         :return:
         """
