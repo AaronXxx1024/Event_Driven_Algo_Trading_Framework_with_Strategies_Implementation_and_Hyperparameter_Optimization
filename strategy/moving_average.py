@@ -74,18 +74,18 @@ class MovingAverageCross(Strategy):
                         self.bought[symbol] = 'out'
 
 
-if __name__ == '__main__':
-    csv_path = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
-    symbol_list = ['bkng']
-    initial_capital = 100000.0
-    heartbeat = 0.0
-    start = datetime.datetime(2015,11,27,0,0,0)
+#%% if __name__ == '__main__':
+csv_path = '/Users/aaronx-mac/PycharmProjects/Learning/Github/Event_Driven_Algo_Trading_Framework_with_Strategies_Implementation_and_Hyperparameter_Optimization/data'
+symbol_list = ['bkng']
+initial_capital = 100000.0
+heartbeat = 0.0
+start = datetime.datetime(2015,11,27,0,0,0)
 
-    mac = Backtest(csv_path=csv_path,
-                   symbol_list=symbol_list,
-                   initial_capital=initial_capital,
-                   heartbeat=heartbeat,
-                   start=start,
-                   strategy=MovingAverageCross)
+mac = Backtest(csv_path=csv_path,
+               symbol_list=symbol_list,
+               initial_capital=initial_capital,
+               heartbeat=heartbeat,
+               start=start,
+               strategy=MovingAverageCross)
 
-    mac.backtesting()
+mac.backtesting()
