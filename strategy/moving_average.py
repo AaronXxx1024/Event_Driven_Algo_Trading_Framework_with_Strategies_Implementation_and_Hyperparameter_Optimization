@@ -55,21 +55,22 @@ class MovingAverageCross(Strategy):
         if event.type == 'Market':
             for symbol in self.symbol_list:
                 bars = self.bars.get_latest_bar_values(symbol, 'adj_close', N=self.long_window)
-                bars_date = self.bars.get_latest_bar_datetime(symbol)
-                if bars is not None and bars != []:
-                    short_sma = np.mean(bars[-self.short_window:])
-                    long_sma = np.mean(bars[-self.long_window:])
+                if len(bars) >= self.long_window:
+                    bars_date = self.bars.get_latest_bar_datetime(symbol)
+                    if bars is not None and bars != []:
+                        short_sma = np.mean(bars[-self.short_window:])
+                        long_sma = np.mean(bars[-self.long_window:])
 
-                    if short_sma > long_sma and self.bought[symbol] == 'out':
-                        sig_dir = 'long'
-                        signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
-                        self.events.put(signal)
-                        self.bought[symbol] = 'long'
-                    elif short_sma < long_sma and self.bought[symbol] == 'long':
-                        sig_dir = 'exit'
-                        signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
-                        self.events.put(signal)
-                        self.bought[symbol] = 'out'
+                        if short_sma > long_sma and self.bought[symbol] == 'out':
+                            sig_dir = 'long'
+                            signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
+                            self.events.put(signal)
+                            self.bought[symbol] = 'long'
+                        elif short_sma < long_sma and self.bought[symbol] == 'long':
+                            sig_dir = 'exit'
+                            signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
+                            self.events.put(signal)
+                            self.bought[symbol] = 'out'
 
 
 #%% if __name__ == '__main__':
