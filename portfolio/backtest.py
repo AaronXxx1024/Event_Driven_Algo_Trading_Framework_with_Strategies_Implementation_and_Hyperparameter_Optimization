@@ -7,6 +7,7 @@ __author_ = "Han Xiao (Aaron)"
 import datetime
 import pprint
 import queue
+from queue import Queue
 import time
 
 # component class unit
@@ -49,37 +50,29 @@ class Backtest:
         self.initial_capital = initial_capital
         self.heartbeat = heartbeat
         self.start = start
-        self.event = queue.Queue()
+        self.event = Queue()
 
+        # Instantiate component class
         self.data_handler = data_handler(events=self.event,
                                          symbol_list=self.symbol_list,
                                          csv_path=self.csv_path,
                                          method='csv')
+
+        self.strategy = strategy(self.data_handler,
+                                 self.event)
+
         self.portfolio = portfolio(bars=self.data_handler,
                                    events=self.event,
                                    start= self.start,
                                    initial_capital=self.initial_capital)
-        self.strategy = strategy(self.data_handler, self.event)
+
         self.execution_handler = execution_handler(events=self.event)
 
+        # event statistics
         self.signals = 0
         self.orders = 0
         self.fill = 0
         self.num_starts = 1
-
-        # self._generate_trading_instances()
-
-    def _generate_trading_instances(self):
-        """
-
-
-        """
-        # self.strategy = Strategy()
-        self.portfolio = Portfolio(bars=self.data_handler,
-                                   events=self.event,
-                                   start= self.start,
-                                   initial_capital=self.initial_capital)
-        self.execution_handler = ExecutionHandler(events=self.event)
 
     def _run_backtest(self):
         """
@@ -87,7 +80,6 @@ class Backtest:
         :return:
         """
         while True:
-
             # Update the market bars
             if self.data_handler.continue_backtest:
                 self.data_handler.update_bars()
