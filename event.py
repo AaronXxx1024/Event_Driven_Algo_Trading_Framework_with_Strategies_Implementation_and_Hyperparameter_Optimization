@@ -121,9 +121,9 @@ class FillEvent(Event):
         """
 
         if self.quantity <= 500:
-            full_cost = max(1.3, 0.013 * self.quantity)
+            commission_cost = max(1.3, 0.013 * self.quantity)
         else:
-            full_cost = max(1.3, 0.008 * self.quantity)
-        return full_cost
+            commission_cost = max(1.3, 0.008 * self.quantity)
+        return commission_cost
 
 
