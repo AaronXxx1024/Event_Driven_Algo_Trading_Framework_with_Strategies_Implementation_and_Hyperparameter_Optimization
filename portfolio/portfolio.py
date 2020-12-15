@@ -130,6 +130,9 @@ class Portfolio:
         if event.type == 'Signal':
             self.events.put(self.generate_order(event))
 
+    def cash_check_FillEvent(self, fill:FillEvent):
+        pass
+
     def update_positions_from_FillEvent(self, fill:FillEvent):
         """
 
