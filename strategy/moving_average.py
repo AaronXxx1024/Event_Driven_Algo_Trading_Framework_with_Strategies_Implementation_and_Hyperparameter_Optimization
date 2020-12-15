@@ -60,16 +60,14 @@ class MovingAverageCross(Strategy):
                     short_sma = np.mean(bars[-self.short_window:])
                     long_sma = np.mean(bars[-self.long_window:])
 
-                    dt = datetime.datetime.utcnow()
-
                     if short_sma > long_sma and self.bought[symbol] == 'out':
                         sig_dir = 'long'
-                        signal = SignalEvent(1, symbol, dt, sig_dir, 1.0)
+                        signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
                         self.events.put(signal)
                         self.bought[symbol] = 'long'
                     elif short_sma < long_sma and self.bought[symbol] == 'long':
                         sig_dir = 'exit'
-                        signal = SignalEvent(1, symbol, dt, sig_dir, 1.0)
+                        signal = SignalEvent(1, symbol, bars_date, sig_dir, 1.0)
                         self.events.put(signal)
                         self.bought[symbol] = 'out'
 
