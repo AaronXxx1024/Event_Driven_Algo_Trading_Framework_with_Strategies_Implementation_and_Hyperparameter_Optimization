@@ -131,6 +131,9 @@ class Portfolio:
             self.events.put(self.generate_order(event))
 
     def cash_check_FillEvent(self, fill:FillEvent):
+        fill_dir = _fill_check(fill)
+        fill_cost = self.bars.get_latest_bar_values(fill.symbol, 'adj_close')
+        cost = fill_dir * fill_cost * fill.quantity
         pass
 
     def update_positions_from_FillEvent(self, fill:FillEvent):
