@@ -41,7 +41,7 @@ class Portfolio:
         self.all_holdings = self.construct_all_holdings()
         self.current_holdings = self.construct_current_holdings()
 
-        self. equity_curve = None
+        self.equity_curve = None
 
     def construct_all_positions(self):
         """
@@ -105,6 +105,8 @@ class Portfolio:
             holding['total'] += market_value
         self.all_holdings.append(holding)
 
+        #todo: delete duplicated in last day
+
     def generate_order(self, signal:SignalEvent, quantity:int = 100, order_type:str = 'market'):
         """
 
@@ -130,11 +132,16 @@ class Portfolio:
         if event.type == 'Signal':
             self.events.put(self.generate_order(event))
 
-    def cash_check_FillEvent(self, fill:FillEvent):
+    def _cash_check_FillEvent(self, fill:FillEvent):
         fill_dir = _fill_check(fill)
         fill_cost = self.bars.get_latest_bar_values(fill.symbol, 'adj_close')
-        cost = fill_dir * fill_cost * fill.quantity
-        pass
+        cost = fill_dir * fill_cost * fill.quantity + fill.commission
+        if fill.direction == 'buy':
+            if self.current_holdings['cash'] >= cost:
+                return fill
+            else:
+                fill.quantity = int(self.current_holdings['cash']/fill.quantity)
+                return fill
 
     def update_positions_from_FillEvent(self, fill:FillEvent):
         """
@@ -166,8 +173,9 @@ class Portfolio:
         :param fill: class FillEvent
         """
         if fill.type == 'Fill':
-            self.update_positions_from_FillEvent(fill)
-            self.update_holdings_from_FillEvent(fill)
+            fill_new = self._cash_check_FillEvent(fill)
+            self.update_positions_from_FillEvent(fill_new)
+            self.update_holdings_from_FillEvent(fill_new)
 
     def create_equity_curve_df(self):
         """
