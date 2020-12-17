@@ -133,14 +133,18 @@ class Portfolio:
             self.events.put(self.generate_order(event))
 
     def _cash_check_FillEvent(self, fill:FillEvent):
-        fill_dir = _fill_check(fill)
+        """
+
+        :param fill:
+        :return:
+        """
         fill_cost = self.bars.get_latest_bar_values(fill.symbol, 'adj_close')
-        cost = fill_dir * fill_cost * fill.quantity + fill.commission
-        if fill.direction == 'buy':
-            if self.current_holdings['cash'] >= cost:
+        cost = fill.direction_num * fill_cost * fill.quantity + fill.commission
+        if fill.direction_num == 1:
+            if self.current_holdings['cash'] >= cost + fill.commission:
                 return fill
-            else:
-                fill.quantity = int(self.current_holdings['cash']/fill.quantity)
+            elif self.current_holdings['cash'] < cost + fill.commission:
+                fill.quantity = int(self.current_holdings['cash'] / fill.quantity)
                 return fill
 
     def update_positions_from_FillEvent(self, fill:FillEvent):
@@ -149,8 +153,7 @@ class Portfolio:
         :param fill:
         :return:
         """
-        fill_dir = _fill_check(fill)
-        self.current_positions[fill.symbol] += fill_dir * fill.quantity
+        self.current_positions[fill.symbol] += fill.direction_num * fill.quantity
 
     def update_holdings_from_FillEvent(self, fill:FillEvent):
         """
@@ -158,9 +161,8 @@ class Portfolio:
         :param fill:
         :return:
         """
-        fill_dir = _fill_check(fill)
         fill_cost = self.bars.get_latest_bar_values(fill.symbol, 'adj_close')
-        cost = fill_dir * fill_cost * fill.quantity
+        cost = fill.direction_num * fill_cost * fill.quantity
         self.current_holdings[fill.symbol] += cost
         self.current_holdings['commission'] += fill.commission
         self.current_holdings['cash'] -= cost + fill.commission
@@ -191,13 +193,6 @@ class Portfolio:
     def output_summary_stats(self):
         pass
 
-def _fill_check(fill:FillEvent):
-    if fill.direction == 'buy':
-        return 1
-    elif fill.direction == 'sell':
-        return -1
-    else:
-        return 0
 
 
 

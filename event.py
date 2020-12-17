@@ -98,6 +98,7 @@ class FillEvent(Event):
         self.exchange = exchange
         self.quantity = quantity
         self.direction = direction
+        self.direction_num = self._fill_check()
         self.fill_cost = fill_cost
         self.currency = currency
 
@@ -126,4 +127,11 @@ class FillEvent(Event):
             commission_cost = max(1.3, 0.008 * self.quantity)
         return commission_cost
 
+    def _fill_check(self):
+        if self.direction == 'buy':
+            return 1
+        elif self.direction == 'sell':
+            return -1
+        else:
+            return 0
 

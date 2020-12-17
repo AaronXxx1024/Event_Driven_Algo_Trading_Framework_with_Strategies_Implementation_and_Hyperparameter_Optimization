@@ -88,3 +88,4 @@ mac = Backtest(csv_path=csv_path,
                strategy=MovingAverageCross)
 
 mac.backtesting()
+mac.portfolio.create_equity_curve_df()
