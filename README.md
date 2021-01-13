@@ -21,12 +21,18 @@ The main design idea is based on Dr. Ernest Chan's *How to Build Your Own Algori
 
 
 # Reference 
-Michael L.Halls-Moore. *Successful Algorithmic Trading*
+Michael L.Halls-Moore. *Successful Algorithmic Trading*.
 
-Ernest P. Chan. Quantitative Trading: *How to Build Your Own Algorithmic Trading Business*.
+Ernest P. Chan. *Quantitative Trading: How to Build Your Own Algorithmic Trading Business*.
 
 W. McKinney. *Python for Data Analysis*.
 
 Aurélien Géron. *Hands-on Machine Learning with Scikit-Learn, Keras and TensorFlow*.
+
+Chris Brooks. *Introductory Econometrics for Finance*
+
+Dennis D. Wackerly. and William Mendenhall III. and Richard L. Scheaffer. *Mathematical Statistical with Applications*
+
+Rob J Hyndman. and George Athanasopoulos. *Forecasting: Principles and Practice*
 
 
