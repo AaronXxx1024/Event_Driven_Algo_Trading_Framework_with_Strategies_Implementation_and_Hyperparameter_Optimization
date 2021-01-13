@@ -75,7 +75,7 @@ class Portfolio:
         holding['total'] = self.initial_capital
         return holding
 
-    def update_time_index(self, event):
+    def update_time_index(self):
         """
 
         :return:
