@@ -12,6 +12,7 @@ data (Online Source(like Yahoo), local csv file and SQL).
 Todo: more data-cleaning functions used in time-series data, factor model or machine learning
 
 Within Framework:
+
 -----------------
 
 """
@@ -81,7 +82,7 @@ class HistoricalDataHandler(DataHandler):
     """
 
     :param events:
-    :param csv_path:
+    :param csv_path: absolute path where you save your data files.
     :param symbol_list:
     :param method:
     """
@@ -118,6 +119,7 @@ class HistoricalDataHandler(DataHandler):
             self._open_csv()
         elif method == 'sql':
             #todo: load data from sql database
+            
             pass
         else:
             msg = "You have to choose one way to load data."
@@ -159,7 +161,7 @@ class HistoricalDataHandler(DataHandler):
 
     def update_bars(self):
         """
-        Loop over symbol list , update the latest N bars
+        Loop over symbol list, update the latest N bars
         info in dict attribute self.latest_symbol_data.
 
         Example:

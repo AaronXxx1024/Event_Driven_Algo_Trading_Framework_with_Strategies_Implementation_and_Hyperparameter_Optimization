@@ -1,8 +1,6 @@
 """"
 Get stock tickers (or name of the asset you want to trade)
 and save them into local MySQL database.
-
-
 """
 
 __author__ = 'Han Xiao (Aaron)'
@@ -11,13 +9,13 @@ import bs4
 import requests
 import pymysql
 import datetime
-import pandas as pd
 
 def get_sp500_wiki():
     """
     Scrape S&P500 constituents from Wiki.
     https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
 
+    --------
     :return: A list of tuple (will be saved into SQL later).
     """
     # Stores the current time that will be used for recording 'created-at' information
@@ -80,8 +78,11 @@ def sp500_to_sql(symbols:list):
     cur.close()
     db.close()
 
+def get_northward():
+    ""
+
 if __name__ == '__main__':
-    symbols = get_sp500_wiki()
-    sp500_to_sql(symbols)
+    symbols_500 = get_sp500_wiki()
+    sp500_to_sql(symbols_500)
 
 
