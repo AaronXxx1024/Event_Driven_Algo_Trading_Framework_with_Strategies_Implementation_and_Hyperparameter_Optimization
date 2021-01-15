@@ -115,7 +115,7 @@ class HistoricalDataHandler(DataHandler):
                     self.symbol_data[symbol] = DataReader(symbol, 'yahoo', start, end)
             pass
         elif method == 'csv':
-            self._open_convert_csv()
+            self._open_csv()
         elif method == 'sql':
             #todo: load data from sql database
             pass
@@ -123,7 +123,7 @@ class HistoricalDataHandler(DataHandler):
             msg = "You have to choose one way to load data."
             raise KeyError(msg)
 
-    def _open_convert_csv(self):
+    def _open_csv(self):
         """
         Open csv based on symbol list.
         --------------------------------------------------------

@@ -1,6 +1,8 @@
 """"
 Get stock tickers (or name of the asset you want to trade)
-and save them into MySQL
+and save them into local MySQL database.
+
+
 """
 
 __author__ = 'Han Xiao (Aaron)'
