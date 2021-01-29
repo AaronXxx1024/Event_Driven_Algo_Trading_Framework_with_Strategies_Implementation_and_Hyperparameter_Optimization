@@ -9,8 +9,9 @@ The main design idea is based on Dr. Ernest Chan's *How to Build Your Own Algori
 
 ## Here is the difference that I've done:
 1. Provided more methods for calling data and statistical test. Integrated those in same framwork.
-2. Updated some calculation methods to increase the running speed.
+2. Updated some calculation methods and data structures to increase the running speed.
 3. Created interface for external machine learning library and make it adaptable to strategies implementated in this framework.
+4. Added capital allocation methods for better position optimazation. 
  
 # To-do
 1. More trading strategies implementation to verify the stability of the framework.
@@ -21,9 +22,9 @@ The main design idea is based on Dr. Ernest Chan's *How to Build Your Own Algori
 
 
 # Reference 
-Michael L.Halls-Moore. *Successful Algorithmic Trading*.
-
 Ernest P. Chan. *Quantitative Trading: How to Build Your Own Algorithmic Trading Business*.
+
+Michael L.Halls-Moore. *Successful Algorithmic Trading*.
 
 W. McKinney. *Python for Data Analysis*.
 
