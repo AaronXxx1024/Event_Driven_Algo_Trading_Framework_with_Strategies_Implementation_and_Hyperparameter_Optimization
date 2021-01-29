@@ -274,3 +274,10 @@ class HistoricalDataHandler(DataHandler):
                 raise
             else:
                 return np.array([getattr(b[1], val_type) for b in bars_list])
+
+# 辅助函数
+def pos_find(data:list, target):
+
+    for i, v in enumerate(data):
+        if target == v:
+            return i
