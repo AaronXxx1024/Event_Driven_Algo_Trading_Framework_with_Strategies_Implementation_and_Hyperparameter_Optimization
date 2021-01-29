@@ -110,7 +110,6 @@ class HistoricalDataHandler(DataHandler):
         # 当要买入的股票都已经买入时，再将这个按钮调回False
         self.swap_dates = self._get_swap_dates()
         self.swap_lists = self._get_swap_lists()
-        self.swap_process = False
 
         self._data_reader_(method, start, end)
 
