@@ -80,7 +80,8 @@ class HistoricalDataHandler(DataHandler):
                  end=None,
                  n: int = None,
                  freq: int = None,
-                 single_factor_test=False
+                 single_factor_test=False,
+                 factor_group = None
                  ):
 
         self.events = events
@@ -95,6 +96,7 @@ class HistoricalDataHandler(DataHandler):
 
         # 单因子测试开关
         self.single_factor_test = single_factor_test
+        self.factor_group = factor_group
         if self.single_factor_test:
             pass
 
