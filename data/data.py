@@ -41,40 +41,22 @@ class DataHandler:
 
     @abstractmethod
     def update_bars(self):
-        """
 
-        :return:
-        """
         raise NotImplementedError("Should implement update_bars()")
 
     @abstractmethod
     def get_latest_bars(self, symbol, N:int = None):
-        """
 
-        :param symbol:
-        :param N:
-        :return:
-        """
         raise NotImplementedError("Should implement get_latest_bars()")
 
     @abstractmethod
     def get_latest_bar_datetime(self, symbol):
-        """
 
-        :param symbol:
-        :return:
-        """
         raise NotImplementedError("Should implement get_latest_bars_datetime()")
 
     @abstractmethod
     def get_latest_bar_values(self, symbol, val_type, N:int = None):
-        """
 
-        :param symbol:
-        :param val_type:
-        :param N:
-        :return:
-        """
         raise NotImplementedError("Should implement get_latest_bar_values()")
 
 
@@ -91,19 +73,44 @@ class HistoricalDataHandler(DataHandler):
                  events: Queue,
                  symbol_list: list,
                  csv_path:str = None,
+                 factor_path=None,
+                 trade_day: list = None,
                  method='csv',
                  start=None,
-                 end=None):
-        """
+                 end=None,
+                 n: int = None,
+                 freq: int = None,
+                 single_factor_test=False
+                 ):
 
-        """
         self.events = events
         self.symbol_list = symbol_list
         self.csv_path = csv_path
+        self.factors_path = factor_path
+        self.trade_day = trade_day
+        self.start = start
+        self.end = end
+        self.n = n
+        self.freq = freq
+
+        # 单因子测试开关
+        self.single_factor_test = single_factor_test
+        if self.single_factor_test:
+            pass
 
         self.symbol_data = {}
         self.latest_symbol_data = {}
         self.continue_backtest = True
+
+        self._data_reader_(method, start, end)
+
+        # 创建换仓日列表，对应的持仓名单
+        # 同时设置一个换仓按钮，在换仓日，当要卖出的所有股票都已经卖出是，将其从False调为True
+        # 然后开始根据当期要更换的股票数目，计算每股可分配的资金
+        # 当要买入的股票都已经买入时，再将这个按钮调回False
+        self.swap_dates = self._get_swap_dates()
+        self.swap_lists = self._get_swap_lists()
+        self.swap_process = False
 
         self._data_reader_(method, start, end)
 
@@ -158,6 +165,46 @@ class HistoricalDataHandler(DataHandler):
         for symbol in self.symbol_list:
             self.symbol_data[symbol] = self.symbol_data[symbol].reindex(
                 index=combined_index, method='pad').iterrows()
+
+    def _get_swap_dates(self):
+        """
+        根据建仓日，换仓频率和回测区间，计算所有的调仓日，并以列表的形式，储存在数据组件类中。
+        :return: self.swap_dates = swap_dates
+        """
+
+        swap_dates = []
+        start_pos = pos_find(self.trade_day, str(self.start.date()))
+
+        length = len(self.trade_day)
+        i = start_pos
+
+        while i < length:
+            swap_dates.append(self.trade_day[i])
+            i += self.freq
+
+        return swap_dates
+
+    def _get_swap_lists(self):
+        """
+        根据换仓日期，择股数量，计算换仓日应持有的股票列表（来源于上一个有效交易日），
+        并以字典+列表的形式，储存在数据组件类中
+        :return: self.swap_lists = swap_lists
+        """
+
+        swap_lists = {}
+
+        for swap in self.swap_dates:
+            # 得到换仓日在有效交易日的排名, 需确保这个不是有效交易日的第一天
+            current_swap_date_pos = pos_find(self.trade_day, swap)
+            # 持仓列表应该参照的日期
+            last_date = self.trade_day[current_swap_date_pos - 1]
+            path = self.factors_path + '/{}.csv'.format(last_date)
+            df = pd.read_csv(path, index_col=0)
+            df.sort_values(by='north_holding_rank', inplace=True)
+            swap_list = list(df.iloc[:self.n, 4])
+            swap_lists[swap] = swap_list
+
+        return swap_lists
 
     def update_bars(self):
         """
