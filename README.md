@@ -12,6 +12,7 @@ The main design idea is based on Dr. Ernest Chan's *How to Build Your Own Algori
 2. Updated some calculation methods and data structures to increase the running speed.
 3. Created interface for external machine learning library and make it adaptable to strategies implementated in this framework.
 4. Added capital allocation methods for better position optimazation. 
+5. Added capital allocation methods for Chinese A stocks.
  
 # To-do
 1. More trading strategies implementation to verify the stability of the framework.
@@ -19,7 +20,6 @@ The main design idea is based on Dr. Ernest Chan's *How to Build Your Own Algori
 3. API for all hyperpartameters that used for optimaizing each strategy.
 4. API for connection between the framework and external ML library. This process should be compatitle to step 2.
 5. Re-do my old Fame-French factor model and make it suitable to current framework.
-6. Added capital allocation methods for Chinese A stocks.
 
 # Reference 
 Ernest P. Chan. *Quantitative Trading: How to Build Your Own Algorithmic Trading Business*.
